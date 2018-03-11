@@ -1,0 +1,6 @@
+final best: 1670
+final best err: 0
+final avg: 1690
+final avg err: 0
+final worst: 1852
+final worst err: -4

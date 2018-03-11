@@ -1,7 +1,14 @@
+package helpers
+
+import org.knowm.xchart.QuickChart
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.style.markers.SeriesMarkers
 
-fun getChartWithError(chartTitle: String, xTitle: String, yTitle: String, seriesName: String, xData: List<Number>, yData: List<Number>, err: List<Number>): XYChart {
+fun getChartWithError(chartTitle: String,
+                                 xTitle: String, yTitle: String,
+                                 seriesName: String,
+                                 xData: List<Number>, yData: List<Number>,
+                                 err: List<Number>): XYChart {
 
     // Create Chart
     val chart = XYChart(800, 600)

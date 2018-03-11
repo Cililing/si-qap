@@ -1,4 +1,4 @@
-import qap.StandardGeneticOperations
+import genetic.GeneticOperations
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -7,15 +7,15 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import java.util.*
 
-class StandardGeneticOperationsTest {
+class GeneticOperationsTest {
 
     private lateinit var randomMock : Random
-    private lateinit var instance : StandardGeneticOperations
+    private lateinit var instance : GeneticOperations
 
     @Before
     fun setUp() {
         randomMock =  mock(Random::class.java)
-        instance = StandardGeneticOperations(randomMock)
+        instance = GeneticOperations(randomMock)
     }
 
     @Test
@@ -65,7 +65,7 @@ class StandardGeneticOperationsTest {
     fun crossover_multimpleRandomData_allUnique() {
         // Unmock random and create instance one again!
         this.randomMock = Random()
-        this.instance = StandardGeneticOperations(randomMock)
+        this.instance = GeneticOperations(randomMock)
 
         val numberOfSamples = 20
 

@@ -1,8 +1,8 @@
+import genetic.IGeneticOperations
 import models.GeneticSolutionModel
 import models.InputModel
 import models.ResultModel
-import qap.IGeneticOperations
-import qap.QAPAlgorithm
+import qap.IQAPCostCalculator
 import selectors.IPopulationSelector
 
 class GeneticLooper(private val inputModel: InputModel,
@@ -13,7 +13,7 @@ class GeneticLooper(private val inputModel: InputModel,
                     private val mutationProbability: Float,
                     private val selector: IPopulationSelector,
                     private val geneticOperations: IGeneticOperations,
-                    private val qapAlgorithm: QAPAlgorithm,
+                    private val qapCostCalculator: IQAPCostCalculator,
                     private val resultBuilder: StringBuilder){
 
     private fun geneticLoop(actualPopulation: List<GeneticSolutionModel>): List<GeneticSolutionModel> {
@@ -22,7 +22,7 @@ class GeneticLooper(private val inputModel: InputModel,
         // Now cross and mutate new sample
         val newPopulation = geneticOperations.crossoverAndMutate(newSample, crossoverProbability, mutationProbability)
         // Rate changes
-        return qapAlgorithm.getWholeCostAndAdoption(newPopulation)
+        return qapCostCalculator.getWholeCostAndAdoption(newPopulation)
     }
 
     fun makeLoop() : List<ResultModel> {
@@ -32,7 +32,7 @@ class GeneticLooper(private val inputModel: InputModel,
         val prototypedRandomSolutions = List(startPopulationCount, { (0 until inputModel.numberOfCities).shuffled()} )
 
         // Calculate cost of those solutions
-        var solutionsWithCost = qapAlgorithm.getWholeCostAndAdoption(prototypedRandomSolutions)
+        var solutionsWithCost = qapCostCalculator.getWholeCostAndAdoption(prototypedRandomSolutions)
         results.add(getResultModel(0, solutionsWithCost))
         resultBuilder.append(getResultModel(0, solutionsWithCost).convertToCsvString())
 

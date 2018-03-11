@@ -4,6 +4,10 @@ import models.InputModel
 import java.io.File
 import java.util.*
 
+interface IInputReader {
+    fun readInputModel(fileName: String) : InputModel
+}
+
 class InputReader : IInputReader {
     override fun readInputModel(fileName: String) : InputModel {
         val scanner = Scanner(File(fileName))

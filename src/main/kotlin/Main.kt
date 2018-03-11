@@ -1,42 +1,47 @@
 import ResultBuilder.bigBuilder
 import ResultBuilder.resultBuilder
-import qap.*
+import genetic.GeneticOperations
+import genetic.IGeneticOperations
+import helpers.getChartWithError
+import ioReader.IInputReader
 import ioReader.InputReader
 import models.ResultModel
 import org.knowm.xchart.BitmapEncoder
+import org.knowm.xchart.QuickChart
 import selectors.IPopulationSelector
 import selectors.TournamentSelector
 import java.io.File
 import java.util.*
 import org.knowm.xchart.SwingWrapper
-import selectors.RouletteSelector
+import qap.QAPCostCalculator
 
 
 // Load input model and load proper strategy
+val inputReader: IInputReader = InputReader()
 val outputPrefix = "output/"
 val inputPrefix = "input/"
 val inputsFilenames = listOf(
-        "had12.dat",
-        "had14.dat",
-        "had16.dat",
-        "had18.dat",
+//        "had12.dat",
+//        "had14.dat",
+//        "had16.dat",
+//        "had18.dat",
         "had20.dat"
 )
 val random = Random()
 
 val populationSelector: IPopulationSelector = TournamentSelector(random)
-val geneticOperations: IGeneticOperations = StandardGeneticOperations(random)
+val geneticOperations: IGeneticOperations = GeneticOperations(random)
 
 // Const
 val numberOfTries = 10
 val startPopulationCount = 100
 val numberOfGenerations = 100
 val tournamentSampleCount = 10
-val crossoverProbability = .8f
-val mutationProbability = .03f
+val crossoverProbability = 0.8f
+val mutationProbability = 0.03f
 
 
-val inputModels = inputsFilenames.map { x -> Pair(x, InputReader().readInputModel(inputPrefix + x)) }
+val inputModels = inputsFilenames.map { x -> Pair(x, inputReader.readInputModel(inputPrefix + x)) }
 
 // Buffer for result
 object ResultBuilder {
@@ -61,7 +66,7 @@ fun main(args: Array<String>) {
                     mutationProbability,
                     populationSelector,
                     geneticOperations,
-                    QAPAlgorithm(input.second),
+                    QAPCostCalculator(input.second),
                     resultBuilder
             ).makeLoop())
 
@@ -100,10 +105,6 @@ fun main(args: Array<String>) {
         val indexes = solutions[0].map { x -> x.index }
 
         // Data (from all tries)
-        val bestDataSummed = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].bestSolution.cost } }
-        val avgDataSummed = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].avgResult.toInt() } }
-        val worstDataSummed = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].worstSolution.cost } }
-
         val bestDataAvg = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].bestSolution.cost } }.map { x -> x / numberOfTries }
         val avgDataAvg = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].avgResult.toInt() } }.map { x -> x / numberOfTries }
         val worstDataAvg = (0 until numberOfGenerations).map { x -> (0 until numberOfTries).sumBy { solutions[it][x].worstSolution.cost } }.map { x -> x / numberOfTries }
@@ -121,8 +122,20 @@ fun main(args: Array<String>) {
         // Save chart
         BitmapEncoder.saveJPGWithQuality(chart, "$outputPrefix${input.first}-chart.jpg", 0.8f)
 
-
         SwingWrapper(chart).displayChart()
+
+        // Save some statistics:
+        val statistics =
+                "final best avg: ${bestDataAvg.last()}\n " +
+                "final best avg err: ${bestDataErr.last()}\n" +
+                "#############\n" +
+                "final avg avg: ${avgDataAvg.last()}\n" +
+                "final avg avg err: ${avgDataErr.last()}\n" +
+                "#############\n" +
+                "final worst avg: ${worstDataAvg.last()}\n" +
+                "final worst avg err: ${worstDataErr.last()}\n"
+
+        File("$outputPrefix${input.first}-stats.txt").writeText(statistics)
 
         // Clear solutions
         solutions.clear()

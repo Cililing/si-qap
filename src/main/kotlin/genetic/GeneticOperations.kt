@@ -1,4 +1,4 @@
-package qap
+package genetic
 
 import java.util.*
 
@@ -21,7 +21,7 @@ interface IGeneticOperations {
     fun mutate(list: List<Int>, mutationProbability: Float) : List<Int>
 }
 
-class StandardGeneticOperations(private val random: Random = Random()) : IGeneticOperations {
+class GeneticOperations(private val random: Random = Random()) : IGeneticOperations {
 
     override fun crossover(parentOne: List<Int>, parentTwo: List<Int>, crossoverProbability: Float) : Pair<List<Int>, List<Int>> {
         if (crossoverProbability < random.nextFloat()) {

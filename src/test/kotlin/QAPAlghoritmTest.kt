@@ -2,7 +2,7 @@ import models.InputModel
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import qap.QAPAlgorithm
+import qap.QAPCostCalculator
 
 class QAPAlghoritmTest {
 
@@ -30,11 +30,11 @@ class QAPAlghoritmTest {
                     listOf(0, 2, 0, 0, 0, 2, 3, 0, 0)
             ))
 
-    private lateinit var instance : QAPAlgorithm
+    private lateinit var instance : QAPCostCalculator
 
     @Before
     fun setUp() {
-        instance = QAPAlgorithm(inputModel)
+        instance = QAPCostCalculator(inputModel)
     }
 
     /**
